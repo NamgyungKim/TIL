@@ -15,7 +15,8 @@ html은 렌더링엔진에 의해 파싱되며 DOM을 구성하는 요소 노드
 이 외에 comment노드(주석), DOCTYPE을 위한 DocumentType노드 등 총 12개의 노드 타입이 있다. 
 
 ### 노드 객체의 상속 구조
-모든 노드객체는 Object, EventTarget, Node 인터페이스를 상속 받는다. 추가로 문서노드는 Document, HTMLDocument 인터페이스를 상속받고, 어트리뷰트 노드는 Attr, 텍스트 노드는 CharacterDate 인터페이스를 각각 상속 받는다.  
+모든 노드객체는 Object, EventTarget, Node 인터페이스를 상속 받는다.  
+추가로 문서노드는 Document, HTMLDocument 인터페이스를 상속받고, 어트리뷰트 노드는 Attr, 텍스트 노드는 CharacterDate 인터페이스를 각각 상속 받는다.  
 즉 노드객체는 프로토타입 체인에 있는 모든 프로토 타입의 프로퍼티나 메서드를 상속받아 사용할 수 있다.  
 
 |input 요소노드 객체의 특성|프로토타입을 제공하는 객체|
@@ -93,15 +94,100 @@ HTMLCollection과 NodeList는 여러개의 값을 받아오기위한 DOM 컬렉�
 <br>
 
 ## 39.3 노드 탐색
+노드를 취득한 다음 그 노드를 기점으로 DOM트리의 노드를 옮겨다니며 부모, 형제, 자식 노드 등을 탐색해 나간다.  
+이때 DOM트리를 탐색할 수 있도록 Node,Element 인터페이스는 트리 탐색 프로퍼티를 제공한다.  
+노트 탐색 프로퍼티는 setter없이 getter만 존재하여 참조만 가능한 **읽기 전용 접근자** 프로퍼티이다. 
+
+### 공백 텍스트 노드
+스페이스, 탭, 줄바꿈 등 공백 문자는 텍스트 노드를 생성한다.  
+만약 공백없이 작성한다면 가독성에 좋지 않으므로 권장하지 않는다.
+```html
+<ul id="number"><li class="1">2</li><li class="2">2</li><li class="3">3</li></ul>
+```
+
+### 자식 노드 탐색
+|프로퍼티|설명|
+|-------|-----|
+|Node.childNode|요소 노드 뿐아니라 텍스트 노드 포함|
+|Element.children|HTMLCollection에 담아 반환한다. 여기에는 텍스트 노드가 포함되지 않는다.|
+|Node.firstChild|첫번째 자식노드 반환|
+|Element.lastChild|마지막 자식노드 반환|
+|Node.firstElementChild|첫번째 자식요소노드 반환|
+|Element.lastElementChild|마지막 자식요소노드 반환|
+
+### 자식 노드 존재확인
+|프로퍼티|설명|
+|-------|-----|
+|Node.hasChildNodes|자식이 있는지 boolean으로 반환|
+|Node.childElementCount|자식노드중 텍스트 노드가 아닌 요소노드가 존재하는지 확인.|
+(Node.children.length 자식노드중 텍스트 노드가 아닌 요소노드가 존재하는지 확인.)
+### 부모 노드 탐색
+|프로퍼티|설명|
+|-------|-----|
+|Node.parentNode|부모노드 탐색|
+### 형제 노드 탐색
+|프로퍼티|설명|
+|-------|-----|
+|Node.previousSibling|자신 **이전의 형제노드**를 반환한다. 노드는 요소노드 뿐아니라 텍스트 노드 일수도 있다.|
+|Node.nextSibling|자신 **다음 형제 노드**를 탐색해 반환한다. 노드는 요소노드 뿐아니라 텍스트 노드 일수도 있다.|
+|Element.previousElementSibling|자신 **이전의 형제요소노드**를 탐색하여 반환한다.|
+|Element.nextElementSibling|자신의 **다음 형제요소 노드**를 탐색하여 반환한다. |
+
 <br>
 
-## 39.4 노드 정보 취득
+## ✨ 39.4 노드 정보 취득
+|프로퍼티|설명|
+|-------|-----|
+|Node.nodeType|요소 노드타입: 1,<br> 텍스트 노드타입: 3 <br> 문서노드타입: 9 <br>각 해당하는 상수를 반환한다.|
+|Node.nodeName|요소노드: ul, li 등 <br> 텍스트노드: #text <br> 문서노드: #document <br>를 반환한다.|
+
 <br>
 
 ## 39.5 요소 노드의 텍스트 조작
+요소노드의 텍스트를 조작하기 위해서는 setter, getter를 모두 존재하는 접근자 프로퍼티를 사용해야한다.
+
+### nodeValue
+텍스트 노드를 취득한 뒤 nodeValue를 이용해 값을 변경할 수 있다.
+`$textNode.nodeValue = 'ABC'`
+### textContent
+textContent메서드를 이용하면 요소노드의 컨텐츠영역 내의 텍스트를 모두 반환한다.   
+이때 마크업문법을 넣어도 마크업이 파싱되지 않는다.  
+
+> textContent와 유사한 동작을하는 innerText라는 프로퍼티가 있다. 
+> 하지만 다음과 같은 이유로 사용을 권장하지 않는다.
+> - `visibility:hidden`과같은 비표기 요소의 텍스트를 반환하지 않는다.
+> - innerText는 CSS를 고려해야함으로 textContent보다 느리다
+
 <br>
 
 ## 39.6 DOM 조작
+: DOM조작은 DOM에 노드를 생성, 삭제, 변경 하는 것을 말한다.
+
+### innerHTML
+textContent는 마크업은 무시하고 텍스트만 반환하지만 innerHTML은 마크업이 포함된 문자열을 그대로 변환한다.   
+innerHTML은 삽윕위치를 지정할 수 없고, 문자열을 할당하는 요소노드의 모든 자식 노드를 제거해 할당한다. 
+
+- 장점: 구현이 간단하고 직관적이다.
+- 단점: 크로스 사이트 스크립팅 공격에 취약하다. 
+
+### insertAdjacentHTML 메서드
+insertAdjacentHTML는 기존의 요소를 제거하지 않으면서 위치를 지정해 새로운 요소를 삽입할 수 있다.  
+첫번째 인수로 `beforebegin`,`afterbegin`,`beforeend`,`afterend` 이렇게 4가지 위치를 선택해 할당할 수 있고, 
+두번째 인수로는 html마크업문자를 전달할 수 있다.  
+
+하지만 innerHTML과 마찬가지로 크로스 사이트 스크립팅 공격에 취약하다는 점은 동일하다.
+
+```html
+<!-- beforebegin -->
+<div>
+  <!-- afterbegin -->
+  text
+  <!-- beforeend -->
+</div>
+<!-- afterend -->
+```
+
+
 <br>
 
 ## 39.7 어트리뷰트

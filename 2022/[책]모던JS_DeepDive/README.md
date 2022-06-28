@@ -1,3 +1,3 @@
 # 모던JS DeepDive
 
-[39장](./39장_DOM.md)  
+[39장 DOM](./39장_DOM.md)  
