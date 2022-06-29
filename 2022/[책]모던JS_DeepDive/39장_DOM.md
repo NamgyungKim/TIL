@@ -187,10 +187,111 @@ insertAdjacentHTML는 기존의 요소를 제거하지 않으면서 위치를 �
 <!-- afterend -->
 ```
 
+### node생성과 추가
+
+```js
+const $p = document.createElement('p')
+
+const text = document.createTextNode('HelloWorld!')
+$p.appendChild(text)
+//or
+$p.textContent('HelloWorld!')
+
+$Node.appendChild($p)
+```
+Dom에 append할때 마다 리플로우가 리페인트가 실행되므로 생성한 노드는 마지막 한번에 append하는게 좋다. 
+
+
+### 복수의 노드 생성과 추가
+
+이전에 나도 바닐라JS를 할때 이런실수를 한 적이 있다.
+```js
+const $p = document.createElement('p')
+const text = ['Hello','hi','goodBy']
+
+text.forEach((item)=>{
+  const textNode = document.createTextNode(item)
+  $p.appendChild(textNode)
+  $Node.appendChild($p)
+})
+```
+이렇게 작성하면 위에서 말했다시피 리플로우와 페인트를 3번 반복하게된다.  
+```js
+const $p = document.createElement('p')
+const text = ['Hello','hi','goodBy']
+const $div = document.createElement('div')
+
+text.forEach((item)=>{
+  const textNode = document.createTextNode(item)
+  $p.appendChild(textNode)
+  $div.appendChild($p)
+})
+
+$Node.appendChild($div)
+```
+이와 같이 마지막에 한번에 dom에 추가해주는 것이 좋다. 
+하지만 이렇게 작성할 경우 중간에 쓸대없는 div태그가 하나 추가된다.  
+이때 div태그 대신 사용할 수 있는 것이 `DocumentFragment`이다.  
+
+```js
+const $p = document.createElement('p')
+const text = ['Hello','hi','goodBy']
+const $fragment = createDocumentFragment() // DocumentFragment
+
+text.forEach((item)=>{
+  const textNode = document.createTextNode(item)
+  $p.appendChild(textNode)
+  $fragment.appendChild($p)
+})
+
+$Node.appendChild($fragment)
+```
+
+### 노드 삽입
+|메서드|설명|
+|------|----|
+|Dom.appendChild('추가할 노드')|자식노드의 가장 마지막위치에 추가|
+|Dom.insertBefore(추가할 노드,childNode)|원하는 위치에 노드 추가<br>(첫번째 인수의 노드가 두번째인수의노드앞에 삽입된다.)|
+
+### 노드 이동
+이미 Dom에 존재하는 노드를 appendChild, insertBefore메서드를 이용해 다시 추가하면 해당노드가 제거되고 새로운 위치에 추가된다.
+
+### 노드 복사
+`Node.cloneNode([deep: true|false])` 메서드를 이용하면 노드를 복사할 수 있다. 
+인자로 true를 넣으면 깊은복사를 하고 false일 경우 얕은 복사가 이루어진다.  
+얕은 복사의 경우 바로 아래 자식element까지만 복사되고 그 바로 아래 text는 복사되지 않는다.
+
+### 노드 교체
+`Node.replaceChild(newNode, oldChild)`는 기존 노드를 다른 노드로 교체해준다.  
+oldChild에 교체하고 싶은 노드를 선택한 뒤 newNode에는 oldChild를 대체할다른 노드요소를 넣어주면된다.  
+
+### 노드 삭제
+`Node.removeChild(child)`는 DOM에서 노드를 삭제해준다.  
 
 <br>
 
 ## 39.7 어트리뷰트
+### 어트리뷰트 노드와 attributes프로퍼티
+어트리뷰트는 element마다 여러개의 어트리뷰트를 갖을 수 있다.  
+어트리뷰트는 어트리뷰트이름="어트리뷰트 값"으로 이루어져 있다.   
+`<input type="text" placeholder="text를 입력해주세요"/>`
+
+어트리뷰트는 '글로벌어트리뷰트','이벤트 핸들링 어트리뷰트', 특정 element에서만 사용할 수 있는 어트리뷰트 들이 있다. 
+요소 노드의 모든 어트리뷰트 노드는 요소노드의 Element.attributes프로퍼티로 취득할 수 있으며 getter만 존재하는 읽기 전용 프로퍼티이다.  
+### HTML 어트리뷰트 조작
+attributes프로퍼티는 getter만 존재하지만 `setAttributes(key,value)`를 이용하면 값을 취득 변경까지 가능하다.  
+어트리뷰트를 삭제하려면 `removeAttribute()`메서드를 이용한다.
+```js
+$input.setAttributes('value','foo')
+console.log($input.setAttributes('value')) // foo
+$input.removeAttribute('value')
+```
+### HTML 어트리뷰트 vs DOM 어트리뷰트
+HTML어트리뷰트는 DOM어트리뷰트의 초기값을 지정해주는 역할이다.  
+DOM에서 프로퍼티는 setter와 getter 모두 존재한다.  
+
+
+
 <br>
 
 ## 39.8 스타일
