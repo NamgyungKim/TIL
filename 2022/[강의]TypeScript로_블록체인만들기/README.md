@@ -2,3 +2,4 @@
 
 [TypeScript란?](1_TypeScript란.md)  
 [TypeScript 개요](2_TypeScript개요.md)  
+[Function](3_Function.md)  
