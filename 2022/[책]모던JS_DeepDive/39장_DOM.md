@@ -290,13 +290,74 @@ $input.removeAttribute('value')
 HTML어트리뷰트는 DOM어트리뷰트의 초기값을 지정해주는 역할이다.  
 DOM에서 프로퍼티는 setter와 getter 모두 존재한다.  
 
+- getAttribute 메서드로 취득한 어트리뷰트 값은 변하지 않고 유지된다.
+```js
+<input value="value" id="user" type="text" />
+<script>
+const $input = document.querySelector("#user");
+$input.oninput = () => {
+  console.log(`${$input.value} 프로퍼티값`); // input값에따라변경
+  console.log($input.getAttribute("value")); // 계속 value
+};
+<script />
+```
+DOM 프로퍼티 값을 할당하는 것은 HTML요소의 최신상태를 변경해준다. 
+하지만 HTML요소에 지정한 어트리뷰트 값에는 영향이 없다. 
 
+- 대부분의 HTML 어트리뷰트는 HTML어트리뷰트와 이름이 동일한 DOM프로퍼티와 1:1대응한다. 
+
+- getAttribute메서트로 취득한 어트리뷰트의 값은 언제나 문자열이지만 checked와같은 값은 블리언타입이다. 
+
+### data 어트리뷰트와 dataset 프로퍼티
+
+data 어트리뷰트를 이요하면 표준속성이 아닌 추가적인 정보를 저장할 수 있다.   
+`<li id='id' data-user-name='knk'>`이와같이 data-라는 접두사 뒤에 원하는 이름을 붙여 이용하면 된다.  
+이 값은 dataset을 통해 값을 가져오고 변경할 수 있다.
+```js
+const $user = document.querySelector('#id')
+const userName = $user.dataset.userName
+$user.dataset.userName = 'kim'
+```
 
 <br>
 
 ## 39.8 스타일
-<br>
+### 인라인스타일 조작
+`HTMLElement.style`은 노드의 인라인 스타타일을 취득 또는 변경할 수 있다. 
+프로퍼티는 setter과 getter가 존재한다.
+```js
+$div.style.backgroundColor = 'pink'
+$div.style['background-color'] = 'pink'
+```
 
-## 39.9 DOM표준
-<br>
+### 클래스 조작
+인라인 스타일을 직접 조작할 수 있지만 클래스 붙였다가 제거하며 스타일을 변경할 수 있다.  
+이때 프로퍼티는 class가 아니라 className, classList이다.  
+```js
+console.log($div.className) // class취득
+$div.className.replace('red','pink') // class red-> pink 변경
+```
 
+className은 문자열을 반환하는데 반에 classList는 객체리스트로 class를 반환해준다.  
+
+![className과 classList를 console.log로 찍었을때](./img/39장_dom_className,classList.jpg)  
+
+또한 classList는 다음과같은 메서드를 제공한다.
+
+|메서드|설명|
+|------|----|
+|classList.add(className)|class추가|
+|classList.remove(className)|class제거|
+|classList.item(index)|해당클래스의 index(위치)의 className반환|
+|classList.contains(className)|해당 className이 존재하는지 boolean으로 반환|
+|classList.replace(oldClassName,newClassName)|class 변경|
+|classList.toggle(className[. force])|해당 className과 일치하면 제거하고 없으면 추가, 두번째인수는 제거/추가 여부를 강제하는 boolean을 받을 수 있다.|
+
+### 요소에 적용되어있는 CSS 참조
+`getComputedStyle(element,':after')`을 통해 적용된 스타일을 알 수 있다.
+```js
+const computed = window.getComputedStyle($div)
+computed.width // 100px
+```
+
+<br>
