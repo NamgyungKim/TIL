@@ -66,7 +66,7 @@ class Dic {
 class Word {
     constructor(
         public term:string,
-        public def: string
+        public readonly def: string
     ){}
 }
 ```
