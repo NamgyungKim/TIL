@@ -55,9 +55,19 @@ XMLHttpRequest 객체는 생성자 함수를 호출해 생성한다.
 const xhr = new XMLHttpRequest()
 ```
 
-### XMLHttpRequest 객체의 프로퍼티와 메서드
-
-
 ### HTTP 요청 전송
 
-### HTTP 응답 처리 
+HTTP 요청을 전송하는 경우 다음 순서를 따른다. 
+1. `XMLHttpRequest.open` 메서드로 HTTP요청을 초기화 한다.
+2. 필요에따라 `XMLHttpRequest.setRequestHeader`메서드로 특정 HTTP요청의 헤더 값을 설정한다. 
+3. `XMLHttpRequest.send`메서드로 HTTP요청을 전송한다.
+
+```js
+const xhr = new XMLHttpRequest()
+
+xhr.open('GET','/users')
+
+xhr.setRequestHeader('content-type','application/json')
+
+xhr.send()
+```
